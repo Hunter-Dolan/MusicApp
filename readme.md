@@ -46,6 +46,14 @@ By default docker doesn't ignore this file, and it shouldn't need to get track m
 
 In order to keep the cache in sync, before deployment, you should run the app locally.
 
+## Before you go to the next line
+
+We're assuming here that you have installed the require node_modules. If not run
+
+```
+yarn
+```
+
 ## Building from source
 
 Since this app is written in TypeScript it needs to be compiled before node will run it. To do that simply run
@@ -61,3 +69,29 @@ This application contains unit tests, to run them run
 ```
 yarn test
 ```
+
+## API
+
+`GET /playlists`
+
+Returns an array of all the available playlists
+
+`GET /playlists/:slug`
+
+Returns the information for the playlist, as well as the tracks
+
+`GET /tracks/:slug`
+
+**Params**
+
+`screename`: The name that will be broadcast to other users
+
+Returns the track information as well as the download url. Also broadcasts that you are listening to other users.
+
+*Note: You don't need to make a request to here unless you need the mp3 url*
+
+## One last thing
+
+Is this production ready? **No**.
+
+This was a demo app and a POC that was written in a couple of hours. It is not ready to be the base of your new startup, trust me.
