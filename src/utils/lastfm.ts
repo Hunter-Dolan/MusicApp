@@ -5,6 +5,8 @@ import Config from '../config';
 
 import URI from 'urijs';
 
+import Crypto from 'crypto';
+
 const CACHE_FILE_PATH = Path.join(Config.CACHE_PATH, 'lastfm_cache.json');
 
 export class LastFM {
@@ -32,14 +34,22 @@ export class LastFM {
     }
   }
 
-  private static getCachedResponse(url:string) {
-    this.loadCache();
-    return this.cache![url];
+  private static cacheKey(method:string, params:{[key: string]: any}) {
+    const key = JSON.stringify({ method, params });
+    const sha1 = Crypto.createHash('sha1');
+    sha1.update(key);
+
+    return sha1.digest('hex');
   }
 
-  private static setCachedResponse(url:string, value:{[key: string]: any}) {
+  private static getCachedResponse(method:string, params:{[key: string]: any}) {
     this.loadCache();
-    this.cache![url] = value;
+    return this.cache![this.cacheKey(method, params)];
+  }
+
+  private static setCachedResponse(method:string, params:{[key: string]: any}, value: {[key: string]: any}) {
+    this.loadCache();
+    this.cache![this.cacheKey(method, params)] = value;
 
     clearTimeout(this.cacheSaveTimeout);
 
@@ -62,7 +72,7 @@ export class LastFM {
                                         .toString();
 
     return new Promise((resolve, reject) => {
-      const cacheResponse = this.getCachedResponse(url);
+      const cacheResponse = this.getCachedResponse(method, params);
 
       if (cacheResponse) {
         resolve(cacheResponse);
@@ -76,7 +86,7 @@ export class LastFM {
         res.on('end', () => {
           try {
             const response = JSON.parse(rawData.toString());
-            this.setCachedResponse(url, response);
+            this.setCachedResponse(method, params, response);
             resolve(response);
           } catch (e) {
             reject(e);
