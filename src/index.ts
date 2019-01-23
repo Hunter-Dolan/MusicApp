@@ -40,7 +40,7 @@ export class Backend {
   }
 
   public async serve() {
-    this.logger.debug('Loading tracks');
+    this.logger.debug('Loading tracks, this might take a while...');
     const tracks = await Track.loadTracks();
     this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!')
 

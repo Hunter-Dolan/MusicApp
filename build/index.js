@@ -24,7 +24,7 @@ class Backend {
     }
     serve() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            this.logger.debug('Loading tracks');
+            this.logger.debug('Loading tracks, this might take a while...');
             const tracks = yield track_1.Track.loadTracks();
             this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!');
             this.store.tracks = tracks;
