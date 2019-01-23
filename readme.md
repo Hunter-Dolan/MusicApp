@@ -54,6 +54,10 @@ We're assuming here that you have installed the require node_modules. If not run
 yarn
 ```
 
+We're also assuming that you have your `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `LASTFM_API_KEY` env vars set.
+
+If not, you probably should.
+
 ## Building from source
 
 Since this app is written in TypeScript it needs to be compiled before node will run it. To do that simply run
