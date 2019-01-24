@@ -88,7 +88,7 @@ export class LastFM {
   }
 
   /**
-   * Determines the cache key for a specific query. Useful when getting items 
+   * Determines the cache key for a specific query. Useful when getting items
    * from the cache
    * @param method The lastFM api method
    * @param params The params for that method
