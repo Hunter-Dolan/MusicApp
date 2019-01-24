@@ -36,16 +36,21 @@ export class Track {
    * the meta information for each track from LastFM (or cache)
    */
   public static async loadTracks() {
-    const trackEntries = await DataLoader.listTracks();
     const allTracks:{[key: string]: Track} = {};
 
-    for (const i in trackEntries) {
-      const { id, url } = trackEntries[i];
+    try {
+      const trackEntries = await DataLoader.listTracks();
 
-      const track = new Track(id, url);
-      await track.loadMeta();
+      for (const i in trackEntries) {
+        const { id, url } = trackEntries[i];
 
-      allTracks[track.slug] = track;
+        const track = new Track(id, url);
+        await track.loadMeta();
+
+        allTracks[track.slug] = track;
+      }
+    } catch (e) {
+      throw e;
     }
 
     return allTracks;

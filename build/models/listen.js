@@ -7,9 +7,15 @@ class Listen {
         this.track = track;
         this.screename = screename;
     }
+    /**
+     * Sends a listening message to all who are subscribed to events
+     */
     broadcast() {
         Listen.events.emit('listen', this);
     }
+    /**
+     * Converts the object to a json response
+     */
     toJSON() {
         const { screename } = this;
         const track = this.track.toJSON();
@@ -19,5 +25,8 @@ class Listen {
         };
     }
 }
+/**
+ * Allows for listening to Listen events
+ */
 Listen.events = new events_1.default.EventEmitter();
 exports.Listen = Listen;

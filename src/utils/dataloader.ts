@@ -11,6 +11,10 @@ export class DataLoader {
    * Retrieves the tracks from S3
    */
   public static listTracks():Promise<TrackEntry[]> {
+    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+      throw 'AWS Keys aren\'t set!';
+    }
+
     return new Promise((resolve, reject) => {
       S3.listObjectsV2(
         {

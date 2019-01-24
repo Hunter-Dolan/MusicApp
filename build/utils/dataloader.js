@@ -5,7 +5,13 @@ const aws_sdk_1 = tslib_1.__importDefault(require("aws-sdk"));
 const config_1 = tslib_1.__importDefault(require("../config"));
 const S3 = new aws_sdk_1.default.S3();
 class DataLoader {
+    /**
+     * Retrieves the tracks from S3
+     */
     static listTracks() {
+        if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
+            throw 'AWS Keys aren\'t set!';
+        }
         return new Promise((resolve, reject) => {
             S3.listObjectsV2({
                 Prefix: config_1.default.S3_PREFIX,

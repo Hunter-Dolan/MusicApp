@@ -46,20 +46,26 @@ export class Backend {
    * Starts the server and loads tracks
    */
   public async serve() {
-    this.logger.debug('Loading tracks, this might take a while...');
-    const tracks = await Track.loadTracks();
-    this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!')
+    try {
+      this.logger.debug('Loading tracks, this might take a while...');
+      const tracks = await Track.loadTracks();
+      this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!')
 
-    this.store.tracks = tracks;
+      this.store.tracks = tracks;
 
-    this.logger.debug('Building playlists');
-    const playlists = await Playlist.buildPlaylistsForTracks(tracks);
-    this.logger.debug('Built', Object.keys(playlists).length, 'playlists!');
+      this.logger.debug('Building playlists');
+      const playlists = await Playlist.buildPlaylistsForTracks(tracks);
+      this.logger.debug('Built', Object.keys(playlists).length, 'playlists!');
 
-    this.store.playlists = playlists;
-    
-    this.server.listen(port);
-    this.logger.info('Starting server on port', port);
+      this.store.playlists = playlists;
+      
+      this.server.listen(port);
+      this.logger.info('Starting server on port', port);
+    } catch(e) {
+      this.logger.error(e)
+      this.logger.error('FATAL ERROR! Exiting...');
+      process.exit(0);
+    }
   }
 
   /**

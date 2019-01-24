@@ -8,22 +8,32 @@ class Track {
         this.url = url;
         this.id = id;
     }
-    /*
-     * Initial Discovery
+    /**
+     * Loads the tracks from the data loader (currently S3) then loads
+     * the meta information for each track from LastFM (or cache)
      */
     static loadTracks() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const trackEntries = yield dataloader_1.DataLoader.listTracks();
             const allTracks = {};
-            for (const i in trackEntries) {
-                const { id, url } = trackEntries[i];
-                const track = new Track(id, url);
-                yield track.loadMeta();
-                allTracks[track.slug] = track;
+            try {
+                const trackEntries = yield dataloader_1.DataLoader.listTracks();
+                for (const i in trackEntries) {
+                    const { id, url } = trackEntries[i];
+                    const track = new Track(id, url);
+                    yield track.loadMeta();
+                    allTracks[track.slug] = track;
+                }
+            }
+            catch (e) {
+                throw e;
             }
             return allTracks;
         });
     }
+    /**
+     * Converts the object to JSON
+     * @param includeURL Defines if the URL should be included in the response
+     */
     toJSON(includeURL = false) {
         const { meta } = this;
         if (includeURL) {
@@ -32,8 +42,9 @@ class Track {
         }
         return meta;
     }
-    /*
-     * Initial Meta Loading
+    /**
+     * Breaks the id (which is the key of the file off of S3) into artist and track
+     * because the directory structure is /tracks/[artist]/[track]
      */
     get idComponents() {
         const [artist, track] = this.id.split('/').map((component) => {
@@ -41,6 +52,9 @@ class Track {
         });
         return { artist, track };
     }
+    /**
+     * Retrieves the meta info from Last.fm (or the cache)
+     */
     loadMeta() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             if (this.meta) {
@@ -61,6 +75,10 @@ class Track {
             };
         });
     }
+    /**
+     * Takes and parses album data from LastFM
+     * @param albumData - Album data from LastFM
+     */
     albumMetaFromLastFMData(albumData) {
         if (!albumData) {
             return;
@@ -72,6 +90,10 @@ class Track {
             image,
         };
     }
+    /**
+     * Takes and parses artist data from LastFM
+     * @param artistData - Artist data from LastFM
+     */
     artistMetaFromLastFMData(artistData) {
         if (!artistData) {
             return;
@@ -81,6 +103,9 @@ class Track {
             name,
         };
     }
+    /**
+     * The universal identifier for this track
+     */
     get slug() {
         return this.id.replace(/[^\x00-\x7F]/g, "").split(' ').join('_').toLowerCase();
     }

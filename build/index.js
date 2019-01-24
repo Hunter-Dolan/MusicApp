@@ -12,6 +12,9 @@ const track_1 = require("./models/track");
 const playlist_1 = require("./models/playlist");
 const socket_controller_1 = require("./controllers/socket_controller");
 class Backend {
+    /**
+     * Initializes the application resources
+     */
     constructor() {
         this.logger = new logger_1.Logger();
         this.store = new store_1.Store();
@@ -22,20 +25,33 @@ class Backend {
         const router = new router_1.Router(this.app, this.store);
         router.register();
     }
+    /**
+     * Starts the server and loads tracks
+     */
     serve() {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            this.logger.debug('Loading tracks, this might take a while...');
-            const tracks = yield track_1.Track.loadTracks();
-            this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!');
-            this.store.tracks = tracks;
-            this.logger.debug('Building playlists');
-            const playlists = yield playlist_1.Playlist.buildPlaylistsForTracks(tracks);
-            this.logger.debug('Built', Object.keys(playlists).length, 'playlists!');
-            this.store.playlists = playlists;
-            this.server.listen(port);
-            this.logger.info('Starting server on port', port);
+            try {
+                this.logger.debug('Loading tracks, this might take a while...');
+                const tracks = yield track_1.Track.loadTracks();
+                this.logger.debug('Loaded', Object.keys(tracks).length, 'tracks!');
+                this.store.tracks = tracks;
+                this.logger.debug('Building playlists');
+                const playlists = yield playlist_1.Playlist.buildPlaylistsForTracks(tracks);
+                this.logger.debug('Built', Object.keys(playlists).length, 'playlists!');
+                this.store.playlists = playlists;
+                this.server.listen(port);
+                this.logger.info('Starting server on port', port);
+            }
+            catch (e) {
+                this.logger.error(e);
+                this.logger.error('FATAL ERROR! Exiting...');
+                process.exit(0);
+            }
         });
     }
+    /**
+     * Connects socket io to the server
+     */
     bindSocketIO() {
         this.io.on('connection', socket_controller_1.SocketController.handleConnection);
     }
