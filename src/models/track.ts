@@ -31,8 +31,9 @@ export class Track {
     this.id = id;
   }
 
-  /*
-   * Initial Discovery
+  /**
+   * Loads the tracks from the data loader (currently S3) then loads
+   * the meta information for each track from LastFM (or cache)
    */
   public static async loadTracks() {
     const trackEntries = await DataLoader.listTracks();
@@ -50,6 +51,10 @@ export class Track {
     return allTracks;
   }
 
+  /**
+   * Converts the object to JSON
+   * @param includeURL Defines if the URL should be included in the response
+   */
   public toJSON(includeURL: boolean = false) {
     const { meta } = this;
 
@@ -61,8 +66,9 @@ export class Track {
     return meta;
   }
 
-  /*
-   * Initial Meta Loading
+  /**
+   * Breaks the id (which is the key of the file off of S3) into artist and track
+   * because the directory structure is /tracks/[artist]/[track]
    */
 
   private get idComponents() {
@@ -73,6 +79,9 @@ export class Track {
     return { artist, track };
   }
 
+  /**
+   * Retrieves the meta info from Last.fm (or the cache)
+   */
   private async loadMeta() {
     if (this.meta) {
       return;
@@ -97,6 +106,10 @@ export class Track {
     };
   }
 
+  /**
+   * Takes and parses album data from LastFM
+   * @param albumData - Album data from LastFM
+   */
   private albumMetaFromLastFMData(albumData: {[key: string]: any}) {
     if (!albumData) {
       return;
@@ -111,6 +124,10 @@ export class Track {
     };
   }
 
+  /**
+   * Takes and parses artist data from LastFM
+   * @param artistData - Artist data from LastFM
+   */
   private artistMetaFromLastFMData(artistData: {[key: string]: any}) {
     if (!artistData) {
       return;
@@ -123,6 +140,9 @@ export class Track {
     };
   }
 
+  /**
+   * The universal identifier for this track
+   */
   get slug() {
     return this.id.replace(/[^\x00-\x7F]/g, "").split(' ').join('_').toLowerCase();
   }

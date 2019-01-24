@@ -14,6 +14,9 @@ export class Router {
     this.store = store;
   }
 
+  /**
+   * Registers various api paths
+   */
   public register() {
     const { server } = this;
 
@@ -23,10 +26,19 @@ export class Router {
     this.get('/playlists/:slug', PlaylistController.show);
   }
 
+  /**
+   * A convenience method that will wrap the handlers in the wrapHandler method
+   * @param path The path of the route you are registering
+   * @param handler The handler that you're registering
+   */
   private get(path: string, handler: Function) {
     this.server.get(path, this.wrapHandler(handler));
   }
 
+  /**
+   * A method that adds the store as a parameter to each request
+   * @param handler The handler that you're registering
+   */
   private wrapHandler(handler: Function) {
     return (req: Express.Request, res: Express.Response) => {
       handler(req, res, this.store);

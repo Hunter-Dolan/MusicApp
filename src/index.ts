@@ -24,6 +24,9 @@ export class Backend {
 
   public store: Store;
 
+  /**
+   * Initializes the application resources
+   */
   constructor() {
     this.logger = new Logger();
     this.store = new Store();
@@ -39,6 +42,9 @@ export class Backend {
     router.register();
   }
 
+  /**
+   * Starts the server and loads tracks
+   */
   public async serve() {
     this.logger.debug('Loading tracks, this might take a while...');
     const tracks = await Track.loadTracks();
@@ -56,6 +62,9 @@ export class Backend {
     this.logger.info('Starting server on port', port);
   }
 
+  /**
+   * Connects socket io to the server
+   */
   private bindSocketIO() {
     this.io.on('connection', SocketController.handleConnection);
   }

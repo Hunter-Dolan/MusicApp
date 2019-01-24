@@ -7,7 +7,9 @@ import Config from '../config';
 const S3 = new AWS.S3();
 
 export class DataLoader {
-
+  /**
+   * Retrieves the tracks from S3
+   */
   public static listTracks():Promise<TrackEntry[]> {
     return new Promise((resolve, reject) => {
       S3.listObjectsV2(

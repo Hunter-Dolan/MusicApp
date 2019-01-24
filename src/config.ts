@@ -1,5 +1,9 @@
 import Path from 'path';
 
+/**
+ * A semi centralized config file that is trying to avoid having
+ * config vars thrown across the app
+ */
 export default class Config {
   static S3_BUCKET = process.env.S3_BUCKET;
   static S3_PREFIX = 'tracks/';
